@@ -1,7 +1,7 @@
 {
   "name": "md-links",
   "version": "0.1.0",
-  "main": "./index.js",
+  "main": "index.js",
   "keywords": [
     "cli",
     "javascript",
@@ -9,6 +9,7 @@
     "nodejs"
   ],
   "dependencies": {
+    "cli.js": "^1.0.2",
     "color": "^4.2.0",
     "figlet": "^1.5.2",
     "inquirer": "^8.2.0",
@@ -16,6 +17,23 @@
     "node-fetch": "^2.6.7"
   },
   "bin": {
-    "mdLinks": "./cli.js"
-  }
+    "mdLinks": "cli.js"
+  },
+  "description": "",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/belkisch/LIM016-md-links.git"
+  },
+  "author": "Belkis Chacón Pacheco",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/belkisch/LIM016-md-links/issues"
+  },
+  "homepage": "https://github.com/belkisch/LIM016-md-links#readme"
 }

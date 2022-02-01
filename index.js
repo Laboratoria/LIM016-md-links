@@ -106,24 +106,30 @@ const mdLinks = (path,options) => new Promise ((resolve,reject) => {
  const ruta = validarAbsoluta(path)
   if(validarRuta(ruta)) {
     let archivosMD = validarDirectorio_Archivo(ruta);
-      if (archivosMD.length!==0) {
+      if (archivosMD.length !== 0) {
         setTimeout(() => {
           if(!options.stats && !options.validate) {
             resolve((extraerLinks(ruta)));
-          }else {
+          }else if(!options.stats && options.validate) {
             const arrayLinks = extraerLinks(ruta);
-            resolve(validarLinks(arrayLinks));
+            if(arrayLinks.length !== 0){
+              resolve(validarLinks(arrayLinks));
+            } else {
+               reject('No se encuentra enlaces');
+            } /***** validarLinks ver si hay enlaces  *****/
+          } else if(options.stats && !options.validate) {
+            resolve(stats(extraerLinks(ruta)));
+          } else if(options.stats && options.validate) {
+            resolve(broken(validarLinks(extraerLinks(ruta))));
           }
         },2000);
       }else{
-        reject('No se encuentra archivos .md')
+        reject('No se encuentra archivos .md');
       }/***** validarDirectorio_Archivo ver si hay archivos .md  *****/
   }else {
     reject('La ruta no existe o es incorrecta');
   };/***** validarRuta *****/
 })
 
-module.exports = () => {
-  mdLinks
-};
+module.exports = mdLinks;
 

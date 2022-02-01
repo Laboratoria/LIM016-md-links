@@ -52,71 +52,78 @@ const extraerLinks = (ruta) => {
   return arrayLinks;
 }
 
-
-
 // 6.- Recorrer un arreglo de links y validar el status y mensaje
 const validarLinks = (arrayLinks) => {
- arrayLinks.forEach(elem => {
-
- });
+  const statusLink = arrayLinks.map((link) => {
+    return fetch(link.href)
+      .then((result) => {
+        const statusText = result.status === 200 ? 'OK' : 'NOT FOUND';
+        const PropiedadLinks = {
+          path: link.path,
+          href: link.href,
+          text: (link.text.slice(0,50)),
+          status: result.status,
+          ok: statusText,
+        };
+        return PropiedadLinks;
+      })
+      .catch((error) => {
+        const PropiedadLinks = {
+          path: link.path,
+          href: link.href,
+          text: (link.text.slice(0,50)),
+          status: 'No Estatus',
+          ok: `Fail ${error.message}`,
+        };
+        return PropiedadLinks;
+      })
+  });
+  return Promise.all(statusLink)
+  .then((res) => {
+    console.log(res);
+  })
+  .catch((err) => {
+    console.log(err);
+  })
 };
 
 // 7.- Verificar cantidad de links unicos y totales
-const stats = (elem) => {
-  const total = elem.map((op) => op.href);
-  const unique = new Set(elem.map(elem => elem.href));
-  return `\n Total: ${total.length}  \n Unique: ${unique.size}`;
+const stats = (arrayLinks) => {
+  const total = arrayLinks.map((op) => op.href);
+  const unique = new Set(arrayLinks.map(arrayLinks => arrayLinks.href));
+  return `\nTotal: ${total.length}  \nUnique: ${unique.size}`;
 }
 
 // 8.- Verificar cantidad de links rotos
-const broken = (elem) => {
-  const status = elem.filter((elem) => elem.status >= 400 || elem.statusText == 'NOT FOUND');
-  return `\n Broken: ${status.length}`;
+const broken = (arrayLinks) => {
+  const broken = Array.from(arrayLinks).filter((element) => element.status >= 399);
+  return `Broken: ${broken.length}`;
 }
 
-
 /******************************************************    Creación de la Promesa para Exportar    ******************************************************************/
-const mdLinks = (path, options) => new Promise ((resolve, reject) => {
-  const ruta = validarAbsoluta(path);
+
+const mdLinks = (path,options) => new Promise ((resolve,reject) => {
+ const ruta = validarAbsoluta(path)
   if(validarRuta(ruta)) {
     let archivosMD = validarDirectorio_Archivo(ruta);
-    if(archivosMD.length > 0) {
-      const links = [];
-      archivosMD.forEach((elem) => {
-          links = links.concat(extraerLinks(elem));
-      });
-      if(links.length > 0) {
-
-      } else {
-        reject('No se encuentran enlaces');
-      } /***** extraerLinks ver si hay links  *****/
-    } else {
-      reject('No se encuentra archivos .md');
-    } /***** validarDirectorio_Archivo ver si hay archivos .md  *****/
-  } else {
+      if (archivosMD.length!==0) {
+        setTimeout(() => {
+          if(!options.stats && !options.validate) {
+            resolve((extraerLinks(ruta)));
+          }else {
+            const arrayLinks = extraerLinks(ruta);
+            resolve(validarLinks(arrayLinks));
+          }
+        },2000);
+      }else{
+        reject('No se encuentra archivos .md')
+      }/***** validarDirectorio_Archivo ver si hay archivos .md  *****/
+  }else {
     reject('La ruta no existe o es incorrecta');
-  } /***** validarRuta *****/
+  };/***** validarRuta *****/
 })
 
-
-
-
-
-dir = validarAbsoluta('prueba');
-//extraerLinks(dir);
-//const arrayMD = validarDirectorio_Archivo(ruta);
-console.log(extraerLinks(dir))
-//validarLinks(links);
-//console.log(links);
-//stats(links);
-console.log(stats(extraerLinks(dir)));
-
-
-
-
-
-/*
 module.exports = () => {
-  // ...
+  mdLinks
 };
- */
+
